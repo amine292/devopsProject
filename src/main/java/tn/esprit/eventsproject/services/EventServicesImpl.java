@@ -86,7 +86,7 @@ public class EventServicesImpl implements IEventServices{
         for (Event event:events){
             if(event.getLogistics().isEmpty()){
 
-                return null;
+                return logisticsList;
             }
 
             else {
