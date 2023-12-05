@@ -1,0 +1,9 @@
+GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
+eventsProject,tn.esprit.eventsproject.config,PerformanceAspect,27,7,0,0,5,2,1,2,1,2
+eventsProject,tn.esprit.eventsproject.controllers,EventRestController,28,6,0,0,5,1,5,1,5,1
+eventsProject,tn.esprit.eventsproject.services,EventServicesImpl,27,242,8,18,8,49,7,14,0,8
+eventsProject,tn.esprit.eventsproject.entities,Logistics,32,24,0,0,3,5,5,7,5,7
+eventsProject,tn.esprit.eventsproject.entities,Tache,0,44,0,0,0,2,0,1,0,1
+eventsProject,tn.esprit.eventsproject.entities,Participant,39,17,0,0,4,4,7,5,7,5
+eventsProject,tn.esprit.eventsproject.entities,Event,48,28,0,0,5,5,8,8,8,8
+eventsProject,tn.esprit.eventsproject,EventsProjectApplication,5,3,0,0,2,1,1,1,1,1

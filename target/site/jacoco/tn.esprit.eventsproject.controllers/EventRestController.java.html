@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>EventRestController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">eventsProject</a> &gt; <a href="index.source.html" class="el_package">tn.esprit.eventsproject.controllers</a> &gt; <span class="el_source">EventRestController.java</span></div><h1>EventRestController.java</h1><pre class="source lang-java linenums">package tn.esprit.eventsproject.controllers;
+
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.*;
+import tn.esprit.eventsproject.entities.Event;
+import tn.esprit.eventsproject.entities.Logistics;
+import tn.esprit.eventsproject.entities.Participant;
+import tn.esprit.eventsproject.services.IEventServices;
+
+import java.time.LocalDate;
+import java.util.List;
+
+<span class="fc" id="L13">@RequiredArgsConstructor</span>
+@RequestMapping(&quot;event&quot;)
+@RestController
+public class EventRestController {
+    private final IEventServices eventServices;
+
+    @PostMapping(&quot;/addPart&quot;)
+    public Participant addParticipant(@RequestBody Participant participant){
+<span class="nc" id="L21">        return eventServices.addParticipant(participant);</span>
+    }
+    @PostMapping(&quot;/addEvent/{id}&quot;)
+    public Event addEventPart(@RequestBody Event event, @PathVariable(&quot;id&quot;) int idPart){
+<span class="nc" id="L25">        return eventServices.addAffectEvenParticipant(event, idPart);</span>
+    }
+    @PostMapping(&quot;/addEvent&quot;)
+    public Event addEvent(@RequestBody Event event){
+<span class="nc" id="L29">        return eventServices.addAffectEvenParticipant(event);</span>
+    }
+    @PutMapping(&quot;/addAffectLog/{description}&quot;)
+    public Logistics addAffectLog(@RequestBody Logistics logistics,@PathVariable(&quot;description&quot;) String descriptionEvent){
+<span class="nc" id="L33">        return eventServices.addAffectLog(logistics,descriptionEvent);</span>
+    }
+    @GetMapping(&quot;/getLogs/{d1}/{d2}&quot;)
+    public List&lt;Logistics&gt; getLogistiquesDates (@PathVariable(&quot;d1&quot;) LocalDate date_debut, @PathVariable(&quot;d2&quot;) LocalDate date_fin){
+<span class="nc" id="L37">        return eventServices.getLogisticsDates(date_debut,date_fin);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

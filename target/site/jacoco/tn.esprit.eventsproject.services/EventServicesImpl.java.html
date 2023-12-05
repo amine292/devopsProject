@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>EventServicesImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">eventsProject</a> &gt; <a href="index.source.html" class="el_package">tn.esprit.eventsproject.services</a> &gt; <span class="el_source">EventServicesImpl.java</span></div><h1>EventServicesImpl.java</h1><pre class="source lang-java linenums">package tn.esprit.eventsproject.services;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Service;
+import tn.esprit.eventsproject.entities.Event;
+import tn.esprit.eventsproject.entities.Logistics;
+import tn.esprit.eventsproject.entities.Participant;
+import tn.esprit.eventsproject.entities.Tache;
+import tn.esprit.eventsproject.repositories.EventRepository;
+import tn.esprit.eventsproject.repositories.LogisticsRepository;
+import tn.esprit.eventsproject.repositories.ParticipantRepository;
+
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+<span class="fc" id="L20">@Slf4j</span>
+<span class="fc" id="L21">@RequiredArgsConstructor</span>
+@Service
+public class EventServicesImpl implements IEventServices{
+
+    private final EventRepository eventRepository;
+    private final ParticipantRepository participantRepository;
+    private final LogisticsRepository logisticsRepository;
+
+    @Override
+    public Participant addParticipant(Participant participant) {
+<span class="fc" id="L31">        return participantRepository.save(participant);</span>
+    }
+
+    @Override
+    public Event addAffectEvenParticipant(Event event, int idParticipant) {
+<span class="fc" id="L36">        Participant participant = participantRepository.findById(idParticipant).orElse(null);</span>
+
+        // Check if the participant exists
+<span class="pc bpc" id="L39" title="1 of 2 branches missed.">        if (participant != null) {</span>
+            // Initialize the events set if it doesn't exist
+<span class="pc bpc" id="L41" title="1 of 2 branches missed.">            if (participant.getEvents() == null) {</span>
+<span class="fc" id="L42">                participant.setEvents(new HashSet&lt;&gt;());</span>
+            }
+
+            // Add the event to the participant's events
+<span class="fc" id="L46">            participant.getEvents().add(event);</span>
+
+            // Save the participant
+<span class="fc" id="L49">            participantRepository.save(participant);</span>
+        }
+
+        // Save and return the event
+<span class="fc" id="L53">        return eventRepository.save(event);</span>
+    }
+
+
+    @Override
+    public Event addAffectEvenParticipant(Event event) {
+<span class="fc" id="L59">        Set&lt;Participant&gt; participants = event.getParticipants();</span>
+<span class="fc bfc" id="L60" title="All 2 branches covered.">        for(Participant aParticipant : participants) {</span>
+<span class="fc" id="L61">            Participant participant = participantRepository.findById(aParticipant.getIdPart()).orElse(null);</span>
+<span class="pc bpc" id="L62" title="1 of 2 branches missed.">            if (participant != null) {</span>
+<span class="nc bnc" id="L63" title="All 2 branches missed.">                if (participant.getEvents() == null) {</span>
+<span class="nc" id="L64">                    Set&lt;Event&gt; events = new HashSet&lt;&gt;();</span>
+<span class="nc" id="L65">                    events.add(event);</span>
+<span class="nc" id="L66">                    participant.setEvents(events);</span>
+<span class="nc" id="L67">                } else {</span>
+<span class="nc" id="L68">                    participant.getEvents().add(event);</span>
+                }
+            }
+<span class="fc" id="L71">        }</span>
+<span class="fc" id="L72">        return eventRepository.save(event);</span>
+    }
+
+
+    @Override
+    public Logistics addAffectLog(Logistics logistics, String descriptionEvent) {
+<span class="fc" id="L78">      Event event = eventRepository.findByDescription(descriptionEvent);</span>
+<span class="pc bpc" id="L79" title="1 of 2 branches missed.">      if(event.getLogistics() == null){</span>
+<span class="fc" id="L80">          Set&lt;Logistics&gt; logisticsSet = new HashSet&lt;&gt;();</span>
+<span class="fc" id="L81">          logisticsSet.add(logistics);</span>
+<span class="fc" id="L82">          event.setLogistics(logisticsSet);</span>
+<span class="fc" id="L83">          eventRepository.save(event);</span>
+<span class="fc" id="L84">      }</span>
+      else{
+<span class="nc" id="L86">          event.getLogistics().add(logistics);</span>
+      }
+<span class="fc" id="L88">        return logisticsRepository.save(logistics);</span>
+    }
+
+    @Override
+    public List&lt;Logistics&gt; getLogisticsDates(LocalDate datedebut, LocalDate datefin) {
+<span class="fc" id="L93">        List&lt;Event&gt; events = eventRepository.findByDateDebutBetween(datedebut, datefin);</span>
+
+<span class="fc" id="L95">        List&lt;Logistics&gt; logisticsList = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L96" title="All 2 branches covered.">        for (Event event:events){</span>
+<span class="pc bpc" id="L97" title="1 of 2 branches missed.">            if(event.getLogistics().isEmpty()){</span>
+
+<span class="nc" id="L99">                return logisticsList;</span>
+            }
+
+            else {
+<span class="fc" id="L103">                Set&lt;Logistics&gt; logisticsSet = event.getLogistics();</span>
+<span class="fc bfc" id="L104" title="All 2 branches covered.">                for (Logistics logistics:logisticsSet){</span>
+<span class="fc bfc" id="L105" title="All 2 branches covered.">                    if(logistics.isReserve())</span>
+<span class="fc" id="L106">                        logisticsList.add(logistics);</span>
+<span class="fc" id="L107">                }</span>
+            }
+<span class="fc" id="L109">        }</span>
+<span class="fc" id="L110">        return logisticsList;</span>
+    }
+
+    @Scheduled(cron = &quot;*/60 * * * * *&quot;)
+    @Override
+    public void calculCout() {
+<span class="fc" id="L116">        List&lt;Event&gt; events = eventRepository.findByParticipants_NomAndParticipants_PrenomAndParticipants_Tache(&quot;Tounsi&quot;,&quot;Ahmed&quot;, Tache.ORGANISATEUR);</span>
+
+<span class="fc" id="L118">        float somme = 0f;</span>
+<span class="fc bfc" id="L119" title="All 2 branches covered.">        for(Event event:events){</span>
+<span class="fc" id="L120">            log.info(event.getDescription());</span>
+<span class="fc" id="L121">            Set&lt;Logistics&gt; logisticsSet = event.getLogistics();</span>
+<span class="fc bfc" id="L122" title="All 2 branches covered.">            for (Logistics logistics:logisticsSet){</span>
+<span class="pc bpc" id="L123" title="1 of 2 branches missed.">                if(logistics.isReserve())</span>
+<span class="fc" id="L124">                    somme+=logistics.getPrixUnit()*logistics.getQuantite();</span>
+<span class="fc" id="L125">            }</span>
+<span class="fc" id="L126">            event.setCout(somme);</span>
+<span class="fc" id="L127">            eventRepository.save(event);</span>
+<span class="fc" id="L128">            log.info(&quot;Cout de l'Event &quot;+event.getDescription()+&quot; est &quot;+ somme);</span>
+
+<span class="fc" id="L130">        }</span>
+<span class="fc" id="L131">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>
