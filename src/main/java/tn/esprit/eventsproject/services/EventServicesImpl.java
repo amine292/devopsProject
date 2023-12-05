@@ -34,15 +34,25 @@ public class EventServicesImpl implements IEventServices{
     @Override
     public Event addAffectEvenParticipant(Event event, int idParticipant) {
         Participant participant = participantRepository.findById(idParticipant).orElse(null);
-        if(participant.getEvents() == null){
-            Set<Event> events = new HashSet<>();
-            events.add(event);
-            participant.setEvents(events);
-        }else {
+
+        // Check if the participant exists
+        if (participant != null) {
+            // Initialize the events set if it doesn't exist
+            if (participant.getEvents() == null) {
+                participant.setEvents(new HashSet<>());
+            }
+
+            // Add the event to the participant's events
             participant.getEvents().add(event);
+
+            // Save the participant
+            participantRepository.save(participant);
         }
+
+        // Save and return the event
         return eventRepository.save(event);
     }
+
 
     @Override
     public Event addAffectEvenParticipant(Event event) {
@@ -79,8 +89,8 @@ public class EventServicesImpl implements IEventServices{
     }
 
     @Override
-    public List<Logistics> getLogisticsDates(LocalDate date_debut, LocalDate date_fin) {
-        List<Event> events = eventRepository.findByDateDebutBetween(date_debut, date_fin);
+    public List<Logistics> getLogisticsDates(LocalDate datedebut, LocalDate datefin) {
+        List<Event> events = eventRepository.findByDateDebutBetween(datedebut, datefin);
 
         List<Logistics> logisticsList = new ArrayList<>();
         for (Event event:events){
@@ -104,7 +114,7 @@ public class EventServicesImpl implements IEventServices{
     @Override
     public void calculCout() {
         List<Event> events = eventRepository.findByParticipants_NomAndParticipants_PrenomAndParticipants_Tache("Tounsi","Ahmed", Tache.ORGANISATEUR);
-    // eventRepository.findAll();
+
         float somme = 0f;
         for(Event event:events){
             log.info(event.getDescription());
