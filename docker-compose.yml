@@ -32,4 +32,4 @@ services:
       - app_data:/app/data
 volumes:
     app_data:  # Define the app_data volume
-    #db:
+    db:
